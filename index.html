@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Orçamentos - Taffer Decor</title>
+
+<style>
+    body {
+        font-family: Poppins, sans-serif;
+        margin: 0;
+        background: #f5f5f5;
+    }
+
+    header {
+        background: linear-gradient(135deg, #6c63ff, #3d39b7);
+        padding: 25px;
+        color: white;
+        text-align: center;
+        font-size: 26px;
+        font-weight: 600;
+    }
+
+    .tab-menu {
+        display: flex;
+        justify-content: space-around;
+        background: #fff;
+        padding: 15px 0;
+        border-bottom: 2px solid #ddd;
+    }
+
+    .tab-menu button {
+        background: none;
+        border: none;
+        font-size: 17px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .tab-menu button.active {
+        color: #6c63ff;
+        text-decoration: underline;
+    }
+
+    .tab-content {
+        display: none;
+        padding: 25px;
+        max-width: 600px;
+        margin: auto;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 13px;
+        font-size: 16px;
+        margin-top: 8px;
+        margin-bottom: 18px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+
+    button {
+        width: 100%;
+        padding: 15px;
+        background: #6c63ff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 18px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .resultado-box {
+        background: #f0edff;
+        border-left: 6px solid #6c63ff;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    .link-loja {
+        display: block;
+        margin-top: 40px;
+        background: #2ecc71;
+        padding: 15px;
+        text-align: center;
+        color: white;
+        font-size: 18px;
+        text-decoration: none;
+        border-radius: 8px;
+    }
+</style>
+</head>
+
+<body>
+
+<header>Sistema de Orçamentos - Taffer Decor</header>
+
+<!-- MENU DE ABAS -->
+<div class="tab-menu">
+    <button class="active" onclick="openTab('aba1')">Dados</button>
+    <button onclick="openTab('aba2')">Calculadora</button>
+    <button onclick="openTab('aba3')">Orçamento</button>
+</div>
+
+<!-- ====================================== -->
+<!-- 🟦 ABA 1 - DADOS DO CLIENTE -->
+<!-- ====================================== -->
+
+<div id="aba1" class="tab-content active">
+    <h2>Seus dados</h2>
+
+    <form id="formDados">
+        <label>Nome</label>
+        <input type="text" name="nome" required>
+
+        <label>E-mail</label>
+        <input type="email" name="email" required>
+
+        <label>Telefone</label>
+        <input type="text" name="telefone" required>
+
+        <label>Cidade</label>
+        <input type="text" name="cidade" required>
+
+        <button type="submit">Próxima etapa</button>
+    </form>
+</div>
+
+<!-- ====================================== -->
+<!-- 🟩 ABA 2 - CALCULADORA -->
+<!-- ====================================== -->
+
+<div id="aba2" class="tab-content">
+    <h2>Calculadora de Orçamentos</h2>
+
+    <label>Selecione o produto</label>
+    <select id="produto">
+        <option disabled selected>Escolha...</option>
+        <option value="cortina">Cortina</option>
+        <option value="persiana">Persiana</option>
+        <option value="papel">Papel de Parede</option>
+        <option value="tapete">Tapete</option>
+    </select>
+
+    <label>Metragem (m²)</label>
+    <input id="metragem" type="number" step="0.1">
+
+    <button onclick="calcular()">Calcular</button>
+</div>
+
+<!-- ====================================== -->
+<!-- 🟧 ABA 3 - PREÇO FINAL -->
+<!-- ====================================== -->
+
+<div id="aba3" class="tab-content">
+    <h2>Resultado do Orçamento</h2>
+
+    <div class="resultado-box" id="resultado">
+        O valor aparecerá aqui.
+    </div>
+
+    <a class="link-loja" href="https://google.com" target="_blank">
+        Loja Parceira
+    </a>
+</div>
+
+<script>
+// =====================================================
+// CONFIGURAÇÃO EDITÁVEL DA CALCULADORA
+// Aqui você pode alterar todos os valores facilmente
+// =====================================================
+const precos = {
+    cortina: { preco: 120, mao: 35, lucro: 0.20 },
+    persiana: { preco: 180, mao: 40, lucro: 0.25 },
+    papel: { preco: 85, mao: 25, lucro: 0.20 },
+    tapete: { preco: 150, mao: 30, lucro: 0.30 }
+};
+
+// -------------------------------
+// CONTROLE DAS ABAS
+// -------------------------------
+function openTab(tabId) {
+    document.querySelectorAll(".tab-content").forEach(tab => tab.classList.remove("active"));
+    document.querySelectorAll(".tab-menu button").forEach(btn => btn.classList.remove("active"));
+
+    document.getElementById(tabId).classList.add("active");
+    event.target.classList.add("active");
+}
+
+// -------------------------------
+//  ENVIO DOS DADOS PARA EMAIL
+// -------------------------------
+document.getElementById("formDados").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    fetch("https://formsubmit.co/ajax/tafferdecor@gmail.com", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            nome: this.nome.value,
+            email: this.email.value,
+            telefone: this.telefone.value,
+            cidade: this.cidade.value
+        })
+    });
+
+    openTab("aba2");
+});
+
+// -------------------------------
+// CÁLCULO DO ORÇAMENTO
+// -------------------------------
+let valorFinal = 0;
+
+function calcular() {
+    const produto = document.getElementById("produto").value;
+    const metragem = parseFloat(document.getElementById("metragem").value);
+
+    if (!produto || !metragem) {
+        alert("Preencha todos os campos!");
+        return;
+    }
+
+    const item = precos[produto];
+
+    let base = metragem * (item.preco + item.mao);
+    valorFinal = base * (1 + item.lucro);
+
+    document.getElementById("resultado").innerHTML = `
+        Valor total: <strong>R$ ${valorFinal.toFixed(2)}</strong>
+    `;
+
+    openTab("aba3");
+}
+</script>
+
+</body>
+</html>
